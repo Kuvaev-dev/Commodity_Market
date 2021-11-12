@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "_AuthLayout";
+}
+
+<link href="~/css/RegistrationStyle.css" rel="stylesheet" />
+
+<body>
+    <div class="container text-center">
+        <label class="mb-4">Вход в Market</label>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Введите адрес электронной почты">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Введите пароль">
+        </div>
+        <button type="submit" class="btn btn-success" style="width: 100%">Войти</button>
+        <hr />
+        <a href="@Url.Action("SignUp", "Auth")">Продолжить</a>
+    </div>
+</body>

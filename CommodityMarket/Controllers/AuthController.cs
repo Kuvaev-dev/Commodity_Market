@@ -1,121 +1,67 @@
-﻿using CommodityMarket.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using CommodityMarketApi.Models.AuthorizeModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CommodityMarket.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
     public class AuthController : Controller
     {
-        private readonly IJwtAuthenticationManager jwtAuthenticationManager;
-        public AuthController(IJwtAuthenticationManager jwtAuthenticationManager)
+        private AuthContext _context;
+        public AuthController(AuthContext context)
         {
-            this.jwtAuthenticationManager = jwtAuthenticationManager;
+            _context = context;
         }
-
-        // GET: AuthController
-        public ActionResult Index()
+        [HttpPost("/token")]
+        public async Task<IActionResult> Token(string username, string password)
         {
-            return View();
-        }
-
-        // GET: AuthController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: AuthController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "Nikita", "qwerty009" };
-        }
-
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "val";
-        }
-
-        // POST: AuthController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
+            var identity = await GetIdentity(username, password);
+            if (identity == null)
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AuthController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: AuthController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AuthController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AuthController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        [HttpPost("authenticate")]
-        [AllowAnonymous]
-        public IActionResult Authenticate([FromBody] User user)
-        {
-            var token = jwtAuthenticationManager.Authenticate(user.Username, user.Password);
-            if (token == null)
-            {
-                return Unauthorized();
+                return BadRequest("Invalid username or password.");
             }
 
-            return Ok(token);
+            var now = DateTime.UtcNow;
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            var response = new
+            {
+                access_token = encodedJwt,
+                username = identity.Name
+            };
+            return Json(response);
+        }
+
+        private async Task<ClaimsIdentity> GetIdentity(string username, string password)
+        {
+            User person = await _context.Users.Include(r => r.Role).FirstOrDefaultAsync(x => x.Email == username && x.Password == password);
+            if (person != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, person.Email),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role.Name)
+                };
+                ClaimsIdentity claimsIdentity =
+                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+                    ClaimsIdentity.DefaultRoleClaimType);
+                return claimsIdentity;
+            }
+            // если пользователь не найден
+            return null;
         }
     }
 }

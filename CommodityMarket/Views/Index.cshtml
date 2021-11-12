@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>All product page</h1>
+
+@foreach (Product product in @Model.products)
+{
+    <div class="card" style="width: 18rem;">
+        <img src="@product.img" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Model: @product.ProductName</h5>
+            <p class="card-text">@product.Cost</p>
+        </div>
+    </div>
+}
