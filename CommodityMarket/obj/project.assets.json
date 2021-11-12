@@ -1989,9 +1989,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Commodity_Market\\CommodityMarket\\CommodityMarket.csproj",
-      "projectName": "CommodityMarket",
-      "projectPath": "D:\\Commodity_Market\\CommodityMarket\\CommodityMarket.csproj",
+      "projectUniqueName": "D:\\Commodity_Market\\CommodityMarket\\CommodityMarketApi.csproj",
+      "projectName": "CommodityMarketApi",
+      "projectPath": "D:\\Commodity_Market\\CommodityMarket\\CommodityMarketApi.csproj",
       "packagesPath": "C:\\Users\\Nikita\\.nuget\\packages\\",
       "outputPath": "D:\\Commodity_Market\\CommodityMarket\\obj\\",
       "projectStyle": "PackageReference",

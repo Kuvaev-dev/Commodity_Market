@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BwxhnjkIUNGCVR9Q4wTV+UC4vZI4SMxUxFPb56UeErN9GsBd9MKghCWAiKCkwQvx3v1h4+8E+tBWEV8Wk4CKXQ==",
+  "dgSpecHash": "AGudGfxvZc79dfRTxU67RC11jj4M5t+IIlZmtHO2Y2NI9+0dnAvlZeEas59g4R2fqSvx0v1D1t5IwgqEWlf/Vw==",
   "success": true,
-  "projectFilePath": "D:\\Commodity_Market\\CommodityMarket\\CommodityMarket.csproj",
+  "projectFilePath": "D:\\Commodity_Market\\CommodityMarket\\CommodityMarketApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nikita\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\Nikita\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
